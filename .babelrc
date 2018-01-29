@@ -1,0 +1,11 @@
+{
+    "plugins": [
+        "lodash",
+        "transform-react-jsx"
+    ],
+    "presets": [
+        "env",
+        "react",
+        "react-app"
+    ]
+}

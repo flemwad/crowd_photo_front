@@ -1,11 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { HttpLink, ApolloClient, InMemoryCache } from 'apollo-client-preset'
-import { ApolloProvider } from 'react-apollo'
+import 'jquery';
+import 'popper.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './index.css';
-import App from './App';
+import 'font-awesome/css/font-awesome.min.css'
+
+import { HttpLink, ApolloClient, InMemoryCache } from 'apollo-client-preset';
+import { ApolloProvider } from 'react-apollo';
+
+import App from './containers/App/App';
 import registerServiceWorker from './registerServiceWorker';
 
 // Apollo client
