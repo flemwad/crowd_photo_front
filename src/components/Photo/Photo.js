@@ -24,44 +24,38 @@ class Photo extends React.Component {
     componentWillReceiveProps(nextProps, nextState) {
         const photo = _.get(nextProps, 'photo', null);
 
-        if (!photo || !photo.image) return;
+        if (!photo || !photo.image || _.isEmpty(photo.image.base64)) return;
 
         this.setState({
             photoFile: {
                 backgroundImage: `data:image/png;base64,${photo.image.base64.trim().replace(/(\r\n|\n|\r)/gm, "")}`,
                 name: photo.image.name,
-                extension: photo.image.extension
+                extension: photo.image.extension,
+                size: photo.image.size
             }
         });
     }
 
-    openUpload() {
-        this.uploadRef.open();
-    }
-
-    clearUpload() {
-        this.setState({photoFile: null});
-    }
+    openUpload = () => this.uploadRef.open();
+    clearUpload = () => this.setState({photoFile: null});
     
     onDrop(acceptedFiles) {
-        
         //Dropzone only accepts one file because multiple: false
         const file = acceptedFiles[0];
 
         let photoFile = {
             name: file.name.split('.')[0],
-            extension: '.' + file.type.split('/')[1]
+            extension: '.' + file.type.split('/')[1],
+            size: file.size
         }
 
-        const updateStateAfterLoad = () => {
+        const updateStateAfterLoad = (readerResult) => {
+            photoFile.backgroundImage = readerResult;
             this.setState({photoFile});
         }
 
         const reader = new FileReader();
-        reader.onload = () => {
-            photoFile.backgroundImage = reader.result;
-            updateStateAfterLoad();
-        };
+        reader.onload = () => updateStateAfterLoad(reader.result);
         reader.onabort = () => console.log('file reading was aborted');
         reader.onerror = () => console.log('file reading has failed');
 
@@ -95,6 +89,7 @@ class Photo extends React.Component {
                 <PhotoContainer>
                     <PhotoCmp />
                 </PhotoContainer>
+
                 <Toolbar loading={this.props.loading} 
                     hideUpload={this.state.photoFile} 
                     clearUpload={this.clearUpload}

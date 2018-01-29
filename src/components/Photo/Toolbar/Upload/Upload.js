@@ -5,9 +5,8 @@ import { Button } from 'reactstrap';
 import FA from 'react-fontawesome';
 
 export default class PhotoToolbarUpload extends React.Component {
-    openUploadPrompt() {
-        if (_.isFunction(this.props.openUpload)) this.props.openUpload();
-    }
+
+    openUploadPrompt = () => _.isFunction(this.props.openUpload) ? this.props.openUpload() : () => {}
 
     render() {
         if (this.props.hideUpload) {

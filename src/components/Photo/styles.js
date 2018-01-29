@@ -23,6 +23,7 @@ export const PhotoDiv = styled.div.attrs({
 
     overflow: hidden;
     pointer-events: none;
+    background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
 

@@ -11,6 +11,12 @@ export const GET_PHOTO = (id) => {
                 postName
                 whatToDo
                 unixTime
+                image {
+                    base64
+                    size
+                    name
+                    extension
+                }
                 meta {
                     hype
                     userRating

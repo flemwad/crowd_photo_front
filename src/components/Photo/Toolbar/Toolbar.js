@@ -12,8 +12,7 @@ export default class PhotoToolbarUpload extends React.Component {
 
                     </div>
                     <div className='col-4'>
-                        <Upload 
-                            loading={this.props.loading} 
+                        <Upload loading={this.props.loading} 
                             hideClear={true}
                             hideUpload={this.props.hideUpload}
                             clearUpload={this.props.clearUpload}
