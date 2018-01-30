@@ -4,8 +4,7 @@ import _ from 'lodash';
 import PhotoLoading from './PhotoLoading/PhotoLoading';
 import Toolbar from './Toolbar/Toolbar';
 import { PhotoContainer, PhotoDiv } from './styles';
-
-import Dropzone from 'react-dropzone';
+import PhotoDropzone from '../PhotoDropzone/PhotoDropzone';
 
 class Photo extends React.Component {
     constructor(props) {
@@ -16,19 +15,21 @@ class Photo extends React.Component {
         }
 
         this.uploadRef = null;
-        this.openUpload = this.openUpload.bind(this);
+        this.setDropRef = this.setDropRef.bind(this);
         this.clearUpload = this.clearUpload.bind(this);
-        this.onDrop = this.onDrop.bind(this);
+        this.photoDropCb = this.photoDropCb.bind(this);
     }
 
     componentWillReceiveProps(nextProps, nextState) {
         const photo = _.get(nextProps, 'photo', null);
 
+        //TODO: remove image && base64 check when done testing, 
+        //they're required values on GraphQL schema anyway
         if (!photo || !photo.image || _.isEmpty(photo.image.base64)) return;
 
         this.setState({
-            photoFile: {
-                backgroundImage: `data:image/png;base64,${photo.image.base64.trim().replace(/(\r\n|\n|\r)/gm, "")}`,
+            image: {
+                base64: photo.image.base64.trim(),
                 name: photo.image.name,
                 extension: photo.image.extension,
                 size: photo.image.size
@@ -36,31 +37,18 @@ class Photo extends React.Component {
         });
     }
 
-    openUpload = () => this.uploadRef.open();
-    clearUpload = () => this.setState({photoFile: null});
-    
-    onDrop(acceptedFiles) {
-        //Dropzone only accepts one file because multiple: false
-        const file = acceptedFiles[0];
+    //Clear photo state on the parent
+    clearUpload = () => this.props.updatePhoto(null);
 
-        let photoFile = {
-            name: file.name.split('.')[0],
-            extension: '.' + file.type.split('/')[1],
-            size: file.size
-        }
+    //Set photo state on the parent after an upload
+    photoDropCb = (fileInfo) => this.props.updatePhoto(_.merge(this.state.photoFile, fileInfo));
 
-        const updateStateAfterLoad = (readerResult) => {
-            photoFile.backgroundImage = readerResult;
-            this.setState({photoFile});
-        }
+    //Literall opens the dropzone
+    openUpload = () => this.dropRef.open();
 
-        const reader = new FileReader();
-        reader.onload = () => updateStateAfterLoad(reader.result);
-        reader.onabort = () => console.log('file reading was aborted');
-        reader.onerror = () => console.log('file reading has failed');
-
-        reader.readAsDataURL(file);
-    }
+    //Kinda wonky, but used so we can open the dropzone from the upload button,
+    //maybe do away with this when my dropzone css doesn't suck
+    setDropRef = (dropRef) => this.dropRef = dropRef;
 
     //TODO: Make surrounding custom CSS tooltip cmp for tooltip info
     render() {
@@ -68,20 +56,16 @@ class Photo extends React.Component {
 
         //Break this guy out, due to the growing size of the function calls
         const DropzoneCmp = () => (
-            <Dropzone
-                ref={(node) => { this.uploadRef = node }}
-                onDrop={(acceptedFiles, rejected) => { this.onDrop(acceptedFiles) }}
-                multiple={false}>
-            </Dropzone>
+            <PhotoDropzone photoDropCb={this.photoDropCb} setDropRef={this.setDropRef} loading={this.props.loading} />
         )
 
         const PhotoDivCmp = () => (
-            <PhotoDiv className='img-fluid' backgroundImage={this.state.photoFile.backgroundImage} />
+            <PhotoDiv className='img-fluid' backgroundImage={this.state.image.base64} />
         );
 
         let PhotoCmp = null;
         if (this.props.loading) PhotoCmp = PhotoLoadingCmp;
-        else if (!this.state.photoFile && !this.props.loading) PhotoCmp = DropzoneCmp;
+        else if (!this.state.image && !this.props.loading) PhotoCmp = DropzoneCmp;
         else PhotoCmp = PhotoDivCmp;
 
         return (

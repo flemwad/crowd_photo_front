@@ -15,3 +15,15 @@ export const HYPE_PHOTO = (id) => {
         }
     `
 };
+
+export const UPSERT_PHOTO = () => {
+    return gql`
+        mutation UpsertPhoto($photoInput: PhotoInput) {
+            upsertPhoto(photoInput: $photoInput) 
+            {
+                id
+            }
+        }
+    `
+};
+

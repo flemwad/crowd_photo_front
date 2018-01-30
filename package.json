@@ -62,9 +62,9 @@
     "whatwg-fetch": "2.0.3"
   },
   "scripts": {
-    "start": "cross-env NODE_PATH=src && set PORT=3333 && node scripts/start.js",
+    "start": "set PORT=3333 && node scripts/start.js --env=jsdom",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "cross-env NODE_PATH=src && set PORT=3333 && node scripts/test.js --env=jsdom"
   },
   "jest": {
     "collectCoverageFrom": [
