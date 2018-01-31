@@ -11,7 +11,7 @@ class Photo extends React.Component {
         super(props);
 
         this.state = {
-            photoFile: null
+            image: null
         }
 
         this.uploadRef = null;
@@ -41,10 +41,15 @@ class Photo extends React.Component {
     clearUpload = () => this.props.updatePhoto(null);
 
     //Set photo state on the parent after an upload
-    photoDropCb = (fileInfo) => this.props.updatePhoto(_.merge(this.state.photoFile, fileInfo));
+    photoDropCb = (photoInfo, file) => {
+        this.setState({image: this.state.image, file: file});
+        this.props.updatePhoto(_.merge(this.state.photoFile, photoInfo));
+    };
 
     //Literall opens the dropzone
     openUpload = () => this.dropRef.open();
+
+    uploadImage = () => this.props.uploadImage(this.state.file);
 
     //Kinda wonky, but used so we can open the dropzone from the upload button,
     //maybe do away with this when my dropzone css doesn't suck
@@ -52,15 +57,15 @@ class Photo extends React.Component {
 
     //TODO: Make surrounding custom CSS tooltip cmp for tooltip info
     render() {
-        const PhotoLoadingCmp = () => (<PhotoLoading />);
+        const PhotoLoadingCmp = () => <PhotoLoading />;
 
         //Break this guy out, due to the growing size of the function calls
         const DropzoneCmp = () => (
             <PhotoDropzone photoDropCb={this.photoDropCb} setDropRef={this.setDropRef} loading={this.props.loading} />
-        )
+        );
 
         const PhotoDivCmp = () => (
-            <PhotoDiv className='img-fluid' backgroundImage={this.state.image.base64} />
+            <PhotoDiv className='img-fluid' base64Image={this.state.image.base64} />
         );
 
         let PhotoCmp = null;
@@ -75,9 +80,9 @@ class Photo extends React.Component {
                 </PhotoContainer>
 
                 <Toolbar loading={this.props.loading} 
-                    hideUpload={this.state.photoFile} 
+                    hideUpload={this.state.image} 
                     clearUpload={this.clearUpload}
-                    openUpload={this.openUpload} />
+                    uploadImage={this.uploadImage} />
             </div>
         );
     }

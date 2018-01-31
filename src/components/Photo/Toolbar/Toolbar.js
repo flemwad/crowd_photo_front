@@ -14,9 +14,9 @@ export default class PhotoToolbarUpload extends React.Component {
                     <div className='col-4'>
                         <Upload loading={this.props.loading} 
                             hideClear={true}
-                            hideUpload={this.props.hideUpload}
+                            // hideUpload={this.props.hideUpload}
                             clearUpload={this.props.clearUpload}
-                            openUpload={this.props.openUpload} />
+                            uploadImage={this.props.uploadImage} />
                     </div>
                 </div>
             </div>

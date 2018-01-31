@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { graphql } from 'react-apollo';
 
 import { Button } from 'reactstrap';
 import FA from 'react-fontawesome';
 
 import Photo from 'src/components/Photo/Photo';
-import { GET_PHOTO } from 'src/api/Photo/Query';
-import { UPSERT_PHOTO } from 'src/api/Photo/Mutation';
+import SchemaContainer from './SchemaContainer';
 
 class PhotoPost extends Component {
     constructor(props) {
@@ -18,12 +16,14 @@ class PhotoPost extends Component {
             }
         };
 
+        //TODO: Fix these naming conventions LOL
         this.savePhoto = this.savePhoto.bind(this);
         this.updatePhoto = this.updatePhoto.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
-        const { loading, photo } = nextProps.data;
+        const { loading, photo } = nextProps.photoQuery;
 
         if (!loading && photo) this.setState({ photo });
 
@@ -61,7 +61,8 @@ class PhotoPost extends Component {
         //base64 strings that are too big respond with 400 to the client
         //May also need to use: https://github.com/jaydenseric/apollo-upload-client
 
-        this.props.mutate({
+        //TODO: Move this into the mutation file themselves?
+        this.props.upsertPhoto({
             variables: { photoInput: this.state.photo }
         })
         .then(({ data }) => {
@@ -72,12 +73,28 @@ class PhotoPost extends Component {
         });
     }
 
+    uploadImage = (file) => {
+        if (!file) return console.log('cannot upload no file');
+
+        this.props.uploadImage({
+            variables: {file: file}
+        }).then(({ data }) => {
+            console.log('uploadImage: file upload success', data);
+        })
+        .catch((error) => {
+            console.log('uploadImage: there was an error sending the file', error);
+        });
+    }
+
     render() {
-        const { loading } = this.props.data;
+        const { loading } = !this.props.new ? this.props.photoQuery.loading : false;
 
         return (
             <div>
-                <Photo loading={loading} photo={this.state.photo} updatePhoto={this.updatePhoto} />
+                <Photo loading={loading} 
+                    photo={this.state.photo} 
+                    updatePhoto={this.updatePhoto}
+                    uploadImage={this.uploadImage} />
                 <Button color="success"
                     disabled={loading}
                     className='m-1'
@@ -90,10 +107,6 @@ class PhotoPost extends Component {
     }
 }
 
-//TODO: get from a list view an RR4:
-const id = 2;
-
-//This looks weird, but it's an UPSERT mutation and GET query composed into one PhotoPost component
-//It will expose things like this.props.data.loading && photo, also this.props.mutate function
 //In the future this will be abstracted to Detail HOC
-export default graphql(UPSERT_PHOTO())(graphql(GET_PHOTO(id))(PhotoPost));
+//SchemaContainer will compose apollo-client and auto resolve props and mutations onto the component
+export default SchemaContainer(PhotoPost)

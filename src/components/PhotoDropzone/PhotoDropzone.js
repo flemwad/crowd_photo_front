@@ -21,7 +21,7 @@ class PhotoDropzone extends React.Component {
 
         const updateStateAfterLoad = (readerResult) => {
             photoInfo.base64 = readerResult;
-            this.props.photoDropCb(photoInfo);
+            this.props.photoDropCb(photoInfo, file);
         }
 
         const reader = new FileReader();

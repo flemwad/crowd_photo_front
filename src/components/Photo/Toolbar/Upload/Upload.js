@@ -1,12 +1,9 @@
 import React from 'react';
-import _ from 'lodash';
 
 import { Button } from 'reactstrap';
 import FA from 'react-fontawesome';
 
 export default class PhotoToolbarUpload extends React.Component {
-
-    openUploadPrompt = () => _.isFunction(this.props.openUpload) ? this.props.openUpload() : () => {}
 
     render() {
         if (this.props.hideUpload) {
@@ -27,7 +24,7 @@ export default class PhotoToolbarUpload extends React.Component {
                 <Button color="primary" 
                     disabled={this.props.loading} 
                     className='m-1' 
-                    onClick={() => { this.openUploadPrompt(); }}>
+                    onClick={() => { this.props.uploadImage(); }}>
                     <FA name="upload" /> Upload
                 </Button>
             </div>
