@@ -5,9 +5,9 @@ import { graphql } from 'react-apollo';
 //translates a string literal into a digestable query/mutation format for the react-apollo HOC
 import gql from 'graphql-tag';
 
-export const GET_PHOTO = graphql(gql`
-    query GetPhoto($id: String!) {
-        photo(id: $id) {
+export const GET_PHOTO_POST = graphql(gql`
+    query GetPhotoPost($id: String!) {
+        photoPost(id: $id) {
             id
             postName
             whatToDo
@@ -28,7 +28,7 @@ export const GET_PHOTO = graphql(gql`
     }
 `,
 {
-    name: 'photoQuery',
+    name: 'photoPostQuery',
     //the parent can set the id we should query for
     options: (props) => ({ variables: {id: props.queryId} }),
     //if the components this.props.new is true, we'll skip the GET query
@@ -36,9 +36,9 @@ export const GET_PHOTO = graphql(gql`
 }
 );
 
-export const GET_PHOTOS = graphql(gql`
+export const GET_PHOTO_POSTS = graphql(gql`
         query {
-            photos {
+            photoPosts {
                 id
                 postName
                 image {
@@ -55,6 +55,6 @@ export const GET_PHOTOS = graphql(gql`
         }
 `, 
 { 
-    name: 'photosQuery' 
+    name: 'photoPostsQuery' 
 }
 );

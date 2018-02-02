@@ -6,9 +6,9 @@ import PageLayout from 'utils/components/hocs/PageLayout/PageLayout';
 const PhotoPostPageLayout = PageLayout(PhotoPost);
 
 //TODO: So much fun to go: React Router 4, Landing Page, Nav bar, etc... 
-class App extends React.Component {
+class CrowdPhotoApp extends React.Component {
     render() {
-        const id = null;
+        const id = 2;
         const NewPhotoPageLayout = () => <PhotoPostPageLayout new={true} />
         const PhotoPageLayout = () => <PhotoPostPageLayout new={false} queryId={id} />
 
@@ -16,4 +16,4 @@ class App extends React.Component {
     }
 }
 
-export default App;
+export default CrowdPhotoApp;

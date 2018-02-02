@@ -1,6 +1,6 @@
 import { compose, withApollo } from 'react-apollo';
 
-import { GET_PHOTO } from 'api/Photo/Query';
-import { HYPE_PHOTO, UPSERT_PHOTO } from 'api/Photo/Mutation';
+import { GET_PHOTO_POST } from 'api/PhotoPost/Query';
+import { HYPE_PHOTO_POST, UPSERT_PHOTO_POST } from 'api/PhotoPost/Mutation';
 
-export default compose(withApollo, GET_PHOTO, HYPE_PHOTO, UPSERT_PHOTO);
+export default compose(withApollo, GET_PHOTO_POST, HYPE_PHOTO_POST, UPSERT_PHOTO_POST);
