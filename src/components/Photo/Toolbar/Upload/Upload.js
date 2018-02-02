@@ -4,7 +4,6 @@ import { Button } from 'reactstrap';
 import FA from 'react-fontawesome';
 
 export default class PhotoToolbarUpload extends React.Component {
-
     render() {
         if (this.props.hideUpload) {
             return (
@@ -24,8 +23,8 @@ export default class PhotoToolbarUpload extends React.Component {
                 <Button color="primary" 
                     disabled={this.props.loading} 
                     className='m-1' 
-                    onClick={() => { this.props.uploadImage(); }}>
-                    <FA name="upload" /> Upload
+                    onClick={() => { this.props.openUpload(); }}>
+                    <FA name="file" /> Choose a file
                 </Button>
             </div>
         );

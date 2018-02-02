@@ -1,8 +1,9 @@
+//react-apollo turns a query string literal that is wrapped with gql-tag into a HOC
+//That HOC wraps your component and gives you the data as the name option on this.props
+//that new HOC'd component will be composed with the client and talks to my graphql server
 import { graphql } from 'react-apollo';
+//translates a string literal into a digestable query/mutation format for the react-apollo HOC
 import gql from 'graphql-tag';
-
-//TODO: Is there a way to share theses string literals with the back end? 
-//Should I get some kind of "shared" repo going?
 
 export const GET_PHOTO = graphql(gql`
     query GetPhoto($id: String!) {
@@ -15,7 +16,7 @@ export const GET_PHOTO = graphql(gql`
                 base64
                 size
                 name
-                extension
+                mimetype
             }
             meta {
                 hype
@@ -26,11 +27,14 @@ export const GET_PHOTO = graphql(gql`
         }
     }
 `,
-    {
-        name: 'photoQuery',
-        options: (props) => ({ variables: {id: props.id} }),
-        skip: (props) => props.new
-    });
+{
+    name: 'photoQuery',
+    //the parent can set the id we should query for
+    options: (props) => ({ variables: {id: props.queryId} }),
+    //if the components this.props.new is true, we'll skip the GET query
+    skip: (props) => props.new 
+}
+);
 
 export const GET_PHOTOS = graphql(gql`
         query {
@@ -39,7 +43,7 @@ export const GET_PHOTOS = graphql(gql`
                 postName
                 image {
                     name
-                    extension
+                    mimetype
                 }
                 meta {
                     hype
@@ -49,4 +53,8 @@ export const GET_PHOTOS = graphql(gql`
                 }
             }
         }
-    `, { name: 'photosQuery' });
+`, 
+{ 
+    name: 'photosQuery' 
+}
+);

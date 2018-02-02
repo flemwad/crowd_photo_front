@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 
 import PhotoLoading from './PhotoLoading/PhotoLoading';
 import Toolbar from './Toolbar/Toolbar';
@@ -18,38 +17,23 @@ class Photo extends React.Component {
         this.setDropRef = this.setDropRef.bind(this);
         this.clearUpload = this.clearUpload.bind(this);
         this.photoDropCb = this.photoDropCb.bind(this);
+        this.image = null;
     }
 
     componentWillReceiveProps(nextProps, nextState) {
-        const photo = _.get(nextProps, 'photo', null);
+        const image = nextProps.image || null;
 
-        //TODO: remove image && base64 check when done testing, 
-        //they're required values on GraphQL schema anyway
-        if (!photo || !photo.image || _.isEmpty(photo.image.base64)) return;
-
-        this.setState({
-            image: {
-                base64: photo.image.base64.trim(),
-                name: photo.image.name,
-                extension: photo.image.extension,
-                size: photo.image.size
-            }
-        });
+        this.setState({image});
     }
 
     //Clear photo state on the parent
-    clearUpload = () => this.props.updatePhoto(null);
+    clearUpload = () => this.props.updatePhotoPostImage(null, null);
 
     //Set photo state on the parent after an upload
-    photoDropCb = (photoInfo, file) => {
-        this.setState({image: this.state.image, file: file});
-        this.props.updatePhoto(_.merge(this.state.photoFile, photoInfo));
-    };
+    photoDropCb = (file, imageInfo) => this.props.updatePhotoPostImage(file, imageInfo);
 
     //Literall opens the dropzone
     openUpload = () => this.dropRef.open();
-
-    uploadImage = () => this.props.uploadImage(this.state.file);
 
     //Kinda wonky, but used so we can open the dropzone from the upload button,
     //maybe do away with this when my dropzone css doesn't suck
@@ -82,7 +66,7 @@ class Photo extends React.Component {
                 <Toolbar loading={this.props.loading} 
                     hideUpload={this.state.image} 
                     clearUpload={this.clearUpload}
-                    uploadImage={this.uploadImage} />
+                    openUpload={this.openUpload} />
             </div>
         );
     }

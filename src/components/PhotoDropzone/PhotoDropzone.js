@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Dropzone from 'react-dropzone';
 
 class PhotoDropzone extends React.Component {
@@ -21,7 +20,7 @@ class PhotoDropzone extends React.Component {
 
         const updateStateAfterLoad = (readerResult) => {
             photoInfo.base64 = readerResult;
-            this.props.photoDropCb(photoInfo, file);
+            this.props.photoDropCb(file, photoInfo);
         }
 
         const reader = new FileReader();

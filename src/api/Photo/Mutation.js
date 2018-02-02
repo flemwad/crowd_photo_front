@@ -1,10 +1,12 @@
+//react-apollo turns a mutation string literal that is wrapped with gql-tag into a HOC
+//That HOC wraps your component and gives you functions on this.props
+//that new HOC'd component will be composed with the client and talks to my graphql server
 import { graphql } from 'react-apollo';
+//translates a string literal into a digestable query/mutation format for the react-apollo HOC
 import gql from 'graphql-tag';
 
 //TODO: Is there a way to share theses string literals with the back end? 
 //Should I get some kind of "shared" repo going?
-
-//TODO: Go one step further and put the functions and class composition in here?
 
 export const HYPE_PHOTO = graphql(gql`
         mutation {
@@ -25,10 +27,11 @@ export const UPSERT_PHOTO = graphql(gql`
         }
     `, { name: 'upsertPhoto' });
 
-export const UPLOAD_IMAGE = graphql(gql`
-        mutation($file: Upload!) {
-            uploadImage(file: $file) {
-                name
-            }
-        }
-    `, { name: 'uploadImage' });
+//I'm sending the image right on upsert mutation now, but this could be useful for later
+// export const UPLOAD_IMAGE = graphql(gql`
+//         mutation($upload: Upload!) {
+//             uploadImage(upload: $upload) {
+//                 name
+//             }
+//         }
+//     `, { name: 'uploadImage' });
