@@ -15,7 +15,7 @@ export const PhotoContainer = styled.div`
 
 export const PhotoDiv = styled.div.attrs({
     //define dynamic props
-    'background-image': props => props.base64Image
+    'background-image': props => props.imageSrc
 })`
     width: 100%;
     min-height 500px;
@@ -28,5 +28,5 @@ export const PhotoDiv = styled.div.attrs({
     background-repeat: no-repeat;
 
     //Use the dynamic props
-    background-image: ${props => `url('${props.base64Image}')`};
+    background-image: ${props => `url('${props.imageSrc}')`};
 `;

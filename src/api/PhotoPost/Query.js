@@ -13,9 +13,9 @@ export const GET_PHOTO_POST = graphql(gql`
             whatToDo
             unixTime
             image {
-                base64
-                size
-                name
+                filename
+                s3Uri
+                length
                 mimetype
             }
             meta {
@@ -42,7 +42,7 @@ export const GET_PHOTO_POSTS = graphql(gql`
                 id
                 postName
                 image {
-                    name
+                    filename
                     mimetype
                 }
                 meta {

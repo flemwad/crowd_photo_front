@@ -43,8 +43,7 @@ class PhotoPost extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {photoPost: dummyData2};
-
+        this.state = {photoPost: dummyData1};
         this.savePhotoPost = this.savePhotoPost.bind(this);
         this.updatePhotoPostImage = this.updatePhotoPostImage.bind(this);
     }
@@ -55,7 +54,7 @@ class PhotoPost extends React.Component {
         if (!loading && photoPost) this.setState({ photoPost });
 
         //TODO: change this to some kind of default object
-        if (!loading && !photoPost) this.setState({ photoPost: dummyData2 });
+        if (!loading && !photoPost) this.setState({ photoPost: dummyData1 });
     }
 
     updatePhotoPostImage = (file, image) => {

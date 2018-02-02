@@ -1,4 +1,5 @@
 import React from 'react';
+import { get } from 'lodash';
 
 import PhotoLoading from './PhotoLoading/PhotoLoading';
 import Toolbar from './Toolbar/Toolbar';
@@ -48,9 +49,8 @@ class Photo extends React.Component {
             <PhotoDropzone photoDropCb={this.photoDropCb} setDropRef={this.setDropRef} loading={this.props.loading} />
         );
 
-        const PhotoDivCmp = () => (
-            <PhotoDiv className='img-fluid' base64Image={this.state.image.base64} />
-        );
+        const imageSrc = get(this.state, 'image.base64', null) || get(this.state, 'image.s3Uri', "");
+        const PhotoDivCmp = () => <PhotoDiv className='img-fluid' imageSrc={imageSrc} />;
 
         let PhotoCmp = null;
         if (this.props.loading) PhotoCmp = PhotoLoadingCmp;
@@ -64,7 +64,7 @@ class Photo extends React.Component {
                 </PhotoContainer>
 
                 <Toolbar loading={this.props.loading} 
-                    hideUpload={this.state.image} 
+                    image={this.state.image}
                     clearUpload={this.clearUpload}
                     openUpload={this.openUpload} />
             </div>
