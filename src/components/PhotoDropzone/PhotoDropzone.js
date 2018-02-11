@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Dropzone from 'react-dropzone';
 
 class PhotoDropzone extends React.Component {
@@ -9,7 +10,7 @@ class PhotoDropzone extends React.Component {
     }    
     
     onDrop(acceptedFiles) {
-        //Dropzone only accepts one file because multiple: false
+        //Dropzone only accepts one file for now
         const file = acceptedFiles[0];
 
         let photoInfo = {
@@ -32,6 +33,7 @@ class PhotoDropzone extends React.Component {
     }
 
     //TODO: Make surrounding custom CSS tooltip cmp for tooltip info
+    //Note that multiple: false means only one photo can be uploaded at a time
     render() {
         return (
             <Dropzone
@@ -42,6 +44,12 @@ class PhotoDropzone extends React.Component {
             </Dropzone>
         );
     }
+}
+
+PhotoDropzone.propTypes = {
+    loading: PropTypes.bool, 
+    photoDropCb: PropTypes.func, 
+    setDropRef: PropTypes.func
 }
 
 export default PhotoDropzone;

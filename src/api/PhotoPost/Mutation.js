@@ -9,7 +9,7 @@ import gql from 'graphql-tag';
 //Should I get some kind of "shared" repo going?
 
 export const HYPE_PHOTO_POST = graphql(gql`
-        mutation {
+        mutation ($id: String!){
             hypePhotoPost(id: $id) {
                 id,
                 meta {

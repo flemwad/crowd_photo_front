@@ -10,7 +10,7 @@ import 'vendor';
 import CrowdPhotoApp from './containers/CrowdPhotoApp/CrowdPhotoApp';
 import cleanTypenameFieldLink from 'utils/cleanTypenameFieldLink';
 
-const uri = 'http://localhost:8080';
+const uri = 'http://localhost:9000';
 const uploadLink = createUploadLink({ uri });
 
 // Apollo client

@@ -1,7 +1,8 @@
 import React from 'react';
-import { get } from 'lodash';
+import PropTypes from 'prop-types';
+import { get, has } from 'lodash';
 
-import PhotoLoading from './PhotoLoading/PhotoLoading';
+import PhotoLoading from './Loading/Loading';
 import Toolbar from './Toolbar/Toolbar';
 import { PhotoContainer, PhotoDiv } from './styles';
 import PhotoDropzone from '../PhotoDropzone/PhotoDropzone';
@@ -10,21 +11,10 @@ class Photo extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            image: null
-        }
-
         this.uploadRef = null;
         this.setDropRef = this.setDropRef.bind(this);
         this.clearUpload = this.clearUpload.bind(this);
         this.photoDropCb = this.photoDropCb.bind(this);
-        this.image = null;
-    }
-
-    componentWillReceiveProps(nextProps, nextState) {
-        const image = nextProps.image || null;
-
-        this.setState({image});
     }
 
     //Clear photo state on the parent
@@ -46,16 +36,22 @@ class Photo extends React.Component {
 
         //Break this guy out, due to the growing size of the function calls
         const DropzoneCmp = () => (
-            <PhotoDropzone photoDropCb={this.photoDropCb} setDropRef={this.setDropRef} loading={this.props.loading} />
+            <PhotoDropzone loading={this.props.loading} 
+                photoDropCb={this.photoDropCb} 
+                setDropRef={this.setDropRef} />
         );
 
-        const imageSrc = get(this.state, 'image.base64', null) || get(this.state, 'image.s3Uri', "");
+        const imageSrc = get(this.props, 'image.base64', null) || get(this.props, 'image.s3Uri', "");
         const PhotoDivCmp = () => <PhotoDiv className='img-fluid' imageSrc={imageSrc} />;
 
         let PhotoCmp = null;
         if (this.props.loading) PhotoCmp = PhotoLoadingCmp;
-        else if (!this.state.image && !this.props.loading) PhotoCmp = DropzoneCmp;
+        else if (!this.props.image && !this.props.loading) PhotoCmp = DropzoneCmp;
         else PhotoCmp = PhotoDivCmp;
+
+        //Used to determine state of upload buttons
+        const photoServerUpload = has(this.props, 'image.s3Uri', false);
+        const photoLocalUpload = has(this.props, 'image.base64', false);
 
         return (
             <div>
@@ -63,13 +59,26 @@ class Photo extends React.Component {
                     <PhotoCmp />
                 </PhotoContainer>
 
-                <Toolbar loading={this.props.loading} 
-                    image={this.state.image}
+                <Toolbar loading={this.props.loading}
+                    isNew={this.props.isNew}
+                    photoServerUpload={photoServerUpload}
+                    photoLocalUpload={photoLocalUpload}
+                    meta={this.props.meta}
+                    hypePhoto={this.props.hypePhoto}
                     clearUpload={this.clearUpload}
                     openUpload={this.openUpload} />
             </div>
         );
     }
+}
+
+Photo.propTypes = {
+    loading: PropTypes.bool,
+    isNew: PropTypes.bool,
+    image: PropTypes.object,
+    meta: PropTypes.object,
+    hypePhoto: PropTypes.func,
+    updatePhotoPostImage: PropTypes.func
 }
 
 export default Photo;
