@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { get, has } from 'lodash';
 
-import PhotoLoading from './Loading/Loading';
+import SpinnyLoadingText from '../Loading/SpinnyLoadingText';
 import Toolbar from './Toolbar/Toolbar';
 import { PhotoContainer, PhotoDiv } from './styles';
-import PhotoDropzone from '../PhotoDropzone/PhotoDropzone';
+import PhotoDropzone from './Dropzone/PhotoDropzone';
 
 class Photo extends React.Component {
     constructor(props) {
@@ -32,7 +32,7 @@ class Photo extends React.Component {
 
     //TODO: Make surrounding custom CSS tooltip cmp for tooltip info
     render() {
-        const PhotoLoadingCmp = () => <PhotoLoading />;
+        const PhotoLoadingCmp = () => <SpinnyLoadingText />;
 
         //Break this guy out, due to the growing size of the function calls
         const DropzoneCmp = () => (

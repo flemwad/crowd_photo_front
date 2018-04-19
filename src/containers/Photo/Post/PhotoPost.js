@@ -1,19 +1,19 @@
 import React from 'react';
-import moment from 'moment';
+import update from 'immutability-helper';
+import removeByKey from 'utils/removeByKey'
 import PropTypes from 'prop-types';
-import { get, merge, set } from 'lodash';
+import { set } from 'lodash';
 
 import { StyledSaveButton, StyledInput, StyledTextarea } from './styles';
 
 import FA from 'react-fontawesome';
 
 import Photo from 'src/components/Photo/Photo';
-import RatingQuestion from 'src/components/RatingQuestion/RatingQuestion';
+import RatingQuestion from 'src/components/Questions/Rating/RatingQuestion';
 import SchemaContainer from './SchemaContainer';
 
 import PHOTO_RATING from 'utils/constants/photoRating';
 
-//TODO: replace this with the loaded data instead
 const defaultPhotoPost = {
     id: null,
     postName: "",
@@ -22,9 +22,9 @@ const defaultPhotoPost = {
     image: null,
     meta: {
         hype: 1,
-        userRating: null,
-        editorRating: null,
-        category: "DEV" //TODO: Constants for this
+        userRating: 0,
+        editorRating: 0,
+        category: "DEV" //TODO: Define these, and make a constant & select dropdown for it
     }
 };
 
@@ -44,13 +44,11 @@ class PhotoPost extends React.Component {
         const { loading, photoPost } = nextProps.photoPostQuery;
 
         if (!loading && photoPost) this.setState({ photoPost });
-
-        //TODO: change this to some kind of default object
-        if (!loading && !photoPost) this.setState({ photoPost: defaultPhotoPost });
     }
 
+    //TODO: Redux
     updatePhotoPostImage = (file, image) => {
-        //Setting state here with a larger base64 image causes the app to lock up temporarily
+        //TODO: Figure out why setting a large base64 image takes time, or find an alternate solution
         this.setState({
             photoPost: {
                 ...this.state.photoPost,
@@ -60,19 +58,26 @@ class PhotoPost extends React.Component {
         });
     }
 
+    //TODO: Redux
     updatePhotoPost = (event) => {
+        //TODO: Add some type of validation
         let photoPost = { ...this.state.photoPost };
 
         //This could be dicey if type isn't set correctly on inputs
         let updateVal = event.target.value;
-        if (event.target.type === 'number') updateVal = parseInt(updateVal); 
+        if (event.target.type === 'number') updateVal = parseInt(updateVal, 10); 
 
-        photoPost = set(photoPost, event.target.id, updateVal);
+        //Create a update object that will set the event.target.value on state
+        //We can deeply refer to objects as long as the id is set properly on the DOM object
+        //e.g. event.target.id = 'meta.userRating'
+        let updateDef = {};
+        set(updateDef, event.target.id, {$set: updateVal});
+
+        photoPost = update(photoPost, updateDef)
         this.setState({ photoPost });
     }
 
-    //TODO: Make this user contextual and store what photos they have hyped
-    //Maybe use MongoDB's DBRef or brute force it? idk
+    //TODO: Redux
     hypePhoto = () => {
         if (!this.state.photoPost.id) return;
 
@@ -84,14 +89,14 @@ class PhotoPost extends React.Component {
             });
     }
 
+    //TODO: Redux
+    //TODO: Validation!
     savePhotoPost = () => {
-        const photoPost = merge(this.state.photoPost, { upload: this.state.file });
+        let photoPost = {...this.state.photoPost};
+        if (this.state.file) photoPost = update(photoPost, {$merge: { upload: this.state.file} });
 
         //exclude image on upsert, since we upload the file not the image object
-        //TODO: Fix the states so image doesn't have to be on state here and remove...
-        delete photoPost.image;
-
-        photoPost.unixTime = moment().unix();
+        photoPost = removeByKey(photoPost, 'image');
 
         this.props.upsertPhotoPost({ variables: { photoPost } })
             .then(({ data }) => {
@@ -106,11 +111,15 @@ class PhotoPost extends React.Component {
         //otherwise the photoQuery will tell the rest of the cmps if it's done loading
         const loading = !this.props.queryId ? false : this.props.photoPostQuery.loading;
 
-        //TODO: break this out to a helper fn probably as the form gets more complex
-        const disableSave = loading || (!this.state.file && !get(this.state, 'photoPost.image'));
+        const disableSave = loading || 
+        //TODO: Break this out to a validation function
+            (!this.state.file && !this.state.photoPost.image) ||
+            !this.state.photoPost.postName ||
+            !this.state.photoPost.whatToDo ||
+            !this.state.photoPost.meta.userRating;
 
         return (
-            <div>
+            <form onSubmit={(event) => { event.preventDefault(); this.savePhotoPost(); }}>
                 <Photo loading={loading}
                     isNew={!this.state.photoPost.id}
                     image={this.state.photoPost.image}
@@ -119,27 +128,31 @@ class PhotoPost extends React.Component {
                     updatePhotoPostImage={this.updatePhotoPostImage} />
                 <StyledInput id="postName"
                     className="form-control"
-                    defaultValue={this.state.photoPost.postName}
+                    value={this.state.photoPost.postName}
                     placeholder="a short summary of the edit you want..."
-                    onBlur={event => this.updatePhotoPost(event)} />
+                    onChange={event => this.updatePhotoPost(event)} />
                 <StyledTextarea id="whatToDo"
                     className="form-control"
                     placeholder="a paragraph on what you expect the edit to accomplish..."
-                    defaultValue={this.state.photoPost.whatToDo}
-                    onBlur={event => this.updatePhotoPost(event)}>
+                    value={this.state.photoPost.whatToDo}
+                    onChange={event => this.updatePhotoPost(event)}>
                 </StyledTextarea>
                 <RatingQuestion loading={loading} 
                     type={PHOTO_RATING.USER.name} 
                     value={this.state.photoPost.meta.userRating}
                     updatePhotoPost={this.updatePhotoPost} />
-                <StyledSaveButton color="success"
-                    disabled={disableSave}
-                    className='m-1'
-                    onClick={() => { this.savePhotoPost(); }}>
-                    <FA name="save" /> Save
-                </StyledSaveButton>
+                <div className='d-flex justify-content-end'>
+                    <StyledSaveButton color="success"
+                        disabled={disableSave}
+                        className="m-1"
+                        onClick={() => { this.savePhotoPost(); }}>
+                        <FA name="save" /> Save
+                    </StyledSaveButton>
+                </div>
+                
+                {/* Debug */}
                 <div>{this.state.photoPost ? JSON.stringify(this.state.photoPost) : ''}</div>
-            </div>
+            </form>
         );
     }
 }

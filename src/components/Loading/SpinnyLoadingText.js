@@ -17,7 +17,7 @@ const LoadingHeader = styled.h3`
     animation: ${rotate360} 5s linear infinite;
 `;
 
-export default class PhotoLoading extends React.Component {
+export default class SpinnyLoadingText extends React.Component {
     render() {
         return (
             <div className='h-100 w-100 text-center'>

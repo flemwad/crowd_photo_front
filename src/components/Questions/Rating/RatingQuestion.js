@@ -18,7 +18,7 @@ class RatingQuestion extends React.Component {
 
         return (
             <Input id={questionId}
-                defaultValue={this.props.value}
+                value={this.props.value}
                 placeholder="in your opinion, how difficult is it to edit this photo?"
                 type="number"
                 min="1"

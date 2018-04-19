@@ -24,6 +24,7 @@ class PhotoDropzone extends React.Component {
             this.props.photoDropCb(file, photoInfo);
         }
 
+        //Read the file and call update photo when it's done
         const reader = new FileReader();
         reader.onload = () => updateStateAfterLoad(reader.result);
         reader.onabort = () => console.error('file reading was aborted');

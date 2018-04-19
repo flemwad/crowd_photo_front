@@ -26,35 +26,12 @@ export const GET_PHOTO_POST = graphql(gql`
             }
         }
     }
-`,
-{
-    name: 'photoPostQuery',
-    //the parent can set the id we should query for
-    options: (props) => ({ variables: {id: props.queryId} }),
-    //if the components this.props.new is true, we'll skip the GET query
-    skip: (props) => !props.queryId 
-}
-);
-
-export const GET_PHOTO_POSTS = graphql(gql`
-        query {
-            photoPosts {
-                id
-                postName
-                image {
-                    filename
-                    mimetype
-                }
-                meta {
-                    hype
-                    userRating
-                    editorRating
-                    category
-                }
-            }
-        }
-`, 
-{ 
-    name: 'photoPostsQuery' 
-}
+    `,
+    {
+        name: 'photoPostQuery',
+        //the parent can set the id we should query for
+        options: (props) => ({ variables: {id: props.queryId} }),
+        //if the components this.props.new is true, we'll skip the GET query
+        skip: (props) => !props.queryId 
+    }
 );

@@ -8,17 +8,6 @@ import gql from 'graphql-tag';
 //TODO: Is there a way to share theses string literals with the back end? 
 //Should I get some kind of "shared" repo going?
 
-export const HYPE_PHOTO_POST = graphql(gql`
-        mutation ($id: String!){
-            hypePhotoPost(id: $id) {
-                id,
-                meta {
-                    hype
-                }
-            }
-        }
-    `, { name: 'hypePhotoPost' });
-
 export const UPSERT_PHOTO_POST = graphql(gql`
         mutation ($photoPost: PhotoPostInput!) {
             upsertPhotoPost(photoPost: $photoPost) {
@@ -26,12 +15,4 @@ export const UPSERT_PHOTO_POST = graphql(gql`
             }
         }
     `, { name: 'upsertPhotoPost' });
-
-//I'm sending the image right on upsert mutation now, but this could be useful for later
-// export const UPLOAD_IMAGE = graphql(gql`
-//         mutation($upload: Upload!) {
-//             uploadImage(upload: $upload) {
-//                 name
-//             }
-//         }
-//     `, { name: 'uploadImage' });
+    
