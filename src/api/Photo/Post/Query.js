@@ -11,7 +11,7 @@ export const GET_PHOTO_POST = graphql(gql`
             id
             postName
             whatToDo
-            unixTime
+            createdUTS
             image {
                 filename
                 s3Uri

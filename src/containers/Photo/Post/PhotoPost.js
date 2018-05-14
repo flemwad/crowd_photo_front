@@ -18,7 +18,7 @@ const defaultPhotoPost = {
     id: null,
     postName: "",
     whatToDo: "",
-    unixTime: null,
+    createdUTS: null,
     image: null,
     meta: {
         hype: 1,
