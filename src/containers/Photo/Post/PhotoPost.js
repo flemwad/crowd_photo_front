@@ -1,6 +1,6 @@
 import React from 'react';
 import update from 'immutability-helper';
-import removeByKey from 'utils/removeByKey'
+import removeByKey from 'utils/removeByKey';
 import PropTypes from 'prop-types';
 import { set } from 'lodash';
 
@@ -59,6 +59,7 @@ class PhotoPost extends React.Component {
     }
 
     //TODO: Redux
+    //TODO: Abstract
     updatePhotoPost = (event) => {
         //TODO: Add some type of validation
         let photoPost = { ...this.state.photoPost };

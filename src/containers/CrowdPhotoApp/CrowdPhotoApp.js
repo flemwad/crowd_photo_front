@@ -15,7 +15,7 @@ class CrowdPhotoApp extends React.Component {
     render() {
         // return <PhotoPostPageLayout queryId={null} />
         // return <PhotoListPageLayout />
-        return <UserDetailPageLayout  queryId={"id1"} registering={false} />
+        return <UserDetailPageLayout  queryId={null} registering={false} />
     }
 }
 
