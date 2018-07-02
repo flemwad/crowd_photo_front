@@ -8,24 +8,18 @@ import { StyledSaveButton, StyledInput, StyledTextarea } from './styles';
 
 import SpinnyLoadingText from '../Loading/SpinnyLoadingText';
 
-const defaultUser = {
-    id: null,
-    first: '',
-    last: '',
-    password: '',
-    nick: '',
-    email: '',
-    bio: '',
-    editor: false
-};
-
 class User extends React.Component {
     constructor(props) {
         super(props);
-
-        this.state = { user: defaultUser };
         
+        if (!props.loading && props.user) this.state = { user: props.user };
+
         this.updateUser = this.updateUser.bind(this);
+        this.UserInfoCmp = this.UserInfoCmp.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (!nextProps.loading && nextProps.user) this.setState({ user: nextProps.user });
     }
 
     //TODO: Redux
@@ -49,11 +43,15 @@ class User extends React.Component {
         this.setState({ user });
     }
 
-    render() {
-        const UserLoadingCmp = () => <SpinnyLoadingText />;
+    UserInfoCmp() {
+        //TODO: Break this out to a validation function
+        const disableSave = this.props.loading || 
+            !this.state.user.first ||
+            !this.state.user.last ||
+            !this.state.user.email ||
+            !this.state.user.nick;
 
-        //Break this guy out, due to the growing size of the function calls
-        const UserInputsCmp = () => (
+        return (
             <form onSubmit={(event) => { event.preventDefault(); this.saveUser(); }}>
                 <div className="form-group">
                     <label htmlFor="first">first name</label>
@@ -113,19 +111,24 @@ class User extends React.Component {
                 <div>{this.state.user ? JSON.stringify(this.state.user) : ''}</div>
             </form>
         );
+    }
+
+    render() {
+        const UserLoadingCmp = () => <SpinnyLoadingText />;
 
         let UserCmp = null;
         if (this.props.loading) UserCmp = UserLoadingCmp;
-        else UserCmp = UserInputsCmp;
+        else UserCmp = this.UserInfoCmp;
 
         return <UserCmp />;
     }
 }
 
 User.propTypes = {
+    user: PropTypes.object,
     loading: PropTypes.bool,
     isNew: PropTypes.bool,
-    editorCheckboxDisabled: Proptypes.bool,
+    editorCheckboxDisabled: PropTypes.bool,
     saveUser: PropTypes.func
 }
 

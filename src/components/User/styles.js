@@ -1,3 +1,6 @@
+import styled from 'styled-components';
+import { Button, Input } from 'reactstrap';
+
 export const StyledInput = styled(Input)`
     margin-bottom: 7px;
 `;

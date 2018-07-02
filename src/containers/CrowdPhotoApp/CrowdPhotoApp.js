@@ -1,8 +1,8 @@
 import React from 'react';
 
-//import PhotoPost from '../Photo/Post/PhotoPost';
-// import PhotoList from '../Photo/List/PhotoList';
-import UserDetail from '../User/Detail/UserDetail';
+//import PhotoPost from './Photo/Post/PhotoPost';
+// import PhotoList from './Photo/List/PhotoList';
+import UserDetail from './User/Detail/UserDetail';
 
 import PageLayout from 'utils/components/hocs/PageLayout/PageLayout';
 
@@ -15,7 +15,7 @@ class CrowdPhotoApp extends React.Component {
     render() {
         // return <PhotoPostPageLayout queryId={null} />
         // return <PhotoListPageLayout />
-        return <UserDetailPageLayout  queryId={'Hy5h5YsAM'} registering={false} />
+        return <UserDetailPageLayout  queryId={null} registering={false} />
     }
 }
 

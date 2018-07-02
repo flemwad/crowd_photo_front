@@ -1,34 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import User from 'src/components/User/User';
 
 // import {  } from './styles';
 
 import SchemaContainer from './SchemaContainer';
 
+const defaultUser = {
+    id: null,
+    first: '',
+    last: '',
+    password: '',
+    nick: '',
+    email: '',
+    bio: '',
+    editor: false
+};
+
 class UserDetail extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.state = { user: defaultUser };
-        
-        this.saveUser = this.saveUser.bind(this);
-        
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (!nextProps.userQuery) return this.setState({user: defaultUser});
-        
-        const { loading, user } = nextProps.userQuery;
-
-        if (!loading && user) this.setState({ user });
-    }
 
     //TODO: Redux
     //TODO: Validation!
-    saveUser = () => {
-        const user = {...this.state.user};
-
+    saveUser = (user) => {
         this.props.upsertUser({ variables: { user } })
             .then(({ data }) => {
                 console.log('upsert success!', data);
@@ -38,21 +32,16 @@ class UserDetail extends React.Component {
     }
 
     render() {
-        //If it's new (no queryId), it'll never be loading, just show dropzone
-        //otherwise the userQuery will tell the rest of the cmps if it's done loading
+        const user = !this.props.queryId ? defaultUser : this.props.userQuery.user;
         const loading = !this.props.queryId ? false : this.props.userQuery.loading;
-
-        if (loading) return (<div>Loading...</div>);
-
-        const disableSave = loading || 
-        //TODO: Break this out to a validation function
-            !this.state.user.first ||
-            !this.state.user.last ||
-            !this.state.user.email ||
-            !this.state.user.nick;
+        const isNew = !this.props.queryId;
 
         return (
-            
+            <User
+                user={user}
+                loading={loading}
+                isNew={isNew}
+                saveUser={this.saveUser} />
         );
     }
 }
