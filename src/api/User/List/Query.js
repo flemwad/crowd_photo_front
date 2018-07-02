@@ -12,6 +12,7 @@ export const LIST_USERS = graphql(gql`
             nick
             first
             last
+            bio
         }
     }
     `, 

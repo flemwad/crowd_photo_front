@@ -32,9 +32,9 @@ class UserDetail extends React.Component {
     }
 
     render() {
-        const user = !this.props.queryId ? defaultUser : this.props.userQuery.user;
-        const loading = !this.props.queryId ? false : this.props.userQuery.loading;
         const isNew = !this.props.queryId;
+        const user = isNew ? defaultUser : this.props.userQuery.user;
+        const loading = isNew ? false : this.props.userQuery.loading;
 
         return (
             <User
