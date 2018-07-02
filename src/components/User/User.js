@@ -1,12 +1,12 @@
 import React from 'react';
-import update from 'immutability-helper';
 import PropTypes from 'prop-types';
+import update from 'immutability-helper';
 import { set } from 'lodash';
+import FA from 'react-fontawesome';
 
 import { StyledSaveButton, StyledInput, StyledTextarea } from './styles';
 
-import FA from 'react-fontawesome';
-import SchemaContainer from './SchemaContainer';
+import SpinnyLoadingText from '../Loading/SpinnyLoadingText';
 
 const defaultUser = {
     id: null,
@@ -19,35 +19,13 @@ const defaultUser = {
     editor: false
 };
 
-class UserDetail extends React.Component {
+class User extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = { user: defaultUser };
         
-        this.saveUser = this.saveUser.bind(this);
         this.updateUser = this.updateUser.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (!nextProps.userQuery) return this.setState({user: defaultUser});
-        
-        const { loading, user } = nextProps.userQuery;
-
-        if (!loading && user) this.setState({ user });
-    }
-
-    //TODO: Redux
-    //TODO: Validation!
-    saveUser = () => {
-        const user = {...this.state.user};
-
-        this.props.upsertUser({ variables: { user } })
-            .then(({ data }) => {
-                console.log('upsert success!', data);
-            }).catch((error) => {
-                console.error('there was an error sending the upsertUser', error);
-            });
     }
 
     //TODO: Redux
@@ -72,20 +50,10 @@ class UserDetail extends React.Component {
     }
 
     render() {
-        //If it's new (no queryId), it'll never be loading, just show dropzone
-        //otherwise the userQuery will tell the rest of the cmps if it's done loading
-        const loading = !this.props.queryId ? false : this.props.userQuery.loading;
+        const UserLoadingCmp = () => <SpinnyLoadingText />;
 
-        if (loading) return (<div>Loading...</div>);
-
-        const disableSave = loading || 
-        //TODO: Break this out to a validation function
-            !this.state.user.first ||
-            !this.state.user.last ||
-            !this.state.user.email ||
-            !this.state.user.nick;
-
-        return (
+        //Break this guy out, due to the growing size of the function calls
+        const UserInputsCmp = () => (
             <form onSubmit={(event) => { event.preventDefault(); this.saveUser(); }}>
                 <div className="form-group">
                     <label htmlFor="first">first name</label>
@@ -131,11 +99,12 @@ class UserDetail extends React.Component {
                         onClick={event => this.updateUser(event)} />
                     <label className="form-check-label" htmlFor="editor">editor</label>
                 </div>
+
                 <div className='d-flex justify-content-end'>
                     <StyledSaveButton color="success"
                         disabled={disableSave}
                         className="m-1"
-                        onClick={() => { this.saveUser(); }}>
+                        onClick={() => { this.props.saveUser(this.state.user); }}>
                         <FA name="save" /> Save
                     </StyledSaveButton>
                 </div>
@@ -144,14 +113,20 @@ class UserDetail extends React.Component {
                 <div>{this.state.user ? JSON.stringify(this.state.user) : ''}</div>
             </form>
         );
+
+        let UserCmp = null;
+        if (this.props.loading) UserCmp = UserLoadingCmp;
+        else UserCmp = UserInputsCmp;
+
+        return <UserCmp />;
     }
 }
 
-UserDetail.propTypes = {
-    registering: PropTypes.bool,
-    queryId: PropTypes.string
+User.propTypes = {
+    loading: PropTypes.bool,
+    isNew: PropTypes.bool,
+    editorCheckboxDisabled: Proptypes.bool,
+    saveUser: PropTypes.func
 }
 
-//In the future this will be abstracted to Detail HOC
-//SchemaContainer will compose apollo-client and auto resolve props and mutations onto the component
-export default SchemaContainer(UserDetail)
+export default User;
