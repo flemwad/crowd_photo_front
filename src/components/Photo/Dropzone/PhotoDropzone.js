@@ -19,9 +19,8 @@ class PhotoDropzone extends React.Component {
             size: file.size
         }
 
-        const updateStateAfterLoad = (readerResult) => {
-            photoInfo.base64 = readerResult;
-            this.props.photoDropCb(file, photoInfo);
+        const updateStateAfterLoad = (base64Result) => {
+            this.props.photoDropCb(file, photoInfo, base64Result);
         }
 
         //Read the file and call update photo when it's done

@@ -18,3 +18,9 @@ export const HYPE_PHOTO_POST = graphql(gql`
             }
         }
     `, { name: 'hypePhotoPost' });
+
+export const DELETE_PHOTO_POST = graphql(gql`
+    mutation ($id: String!){
+        deletePhotoPost(id: $id)
+    }
+`, { name: 'deletePhotoPost' });

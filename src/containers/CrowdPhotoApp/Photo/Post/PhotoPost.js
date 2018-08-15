@@ -2,7 +2,7 @@ import React from 'react';
 import update from 'immutability-helper';
 import removeByKey from 'utils/removeByKey';
 import PropTypes from 'prop-types';
-import { set } from 'lodash';
+import { set, get } from 'lodash';
 
 import { StyledSaveButton, StyledInput, StyledTextarea } from './styles';
 
@@ -32,28 +32,37 @@ class PhotoPost extends React.Component {
     constructor(props) {
         super(props);
 
-        this.state = { photoPost: defaultPhotoPost };
+        this.state = { 
+            photoPost: defaultPhotoPost,
+            base64: null
+        };
         
         this.savePhotoPost = this.savePhotoPost.bind(this);
         this.updatePhotoPostImage = this.updatePhotoPostImage.bind(this);
         this.updatePhotoPost = this.updatePhotoPost.bind(this);
         this.hypePhoto = this.hypePhoto.bind(this);
+        this.deletePhoto = this.deletePhoto.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
         const { loading, photoPost } = nextProps.photoPostQuery;
 
         if (!loading && photoPost) this.setState({ photoPost });
+        
+        //TODO: Mayhaps make this a util, using it a lot
+        const base64 = get(nextProps, 'base64', null) || get(nextProps, 'image.s3Uri', "");
+        if (!loading && base64) this.setState({ base64 });
     }
 
     //TODO: Redux
-    updatePhotoPostImage = (file, image) => {
+    updatePhotoPostImage = (file, image, base64) => {
         //TODO: Figure out why setting a large base64 image takes time, or find an alternate solution
         this.setState({
             photoPost: {
                 ...this.state.photoPost,
                 image
             },
+            base64,
             file
         });
     }
@@ -80,6 +89,7 @@ class PhotoPost extends React.Component {
 
     //TODO: Redux
     hypePhoto = () => {
+        //TODO: Validation
         if (!this.state.photoPost.id) return;
 
         this.props.hypePhotoPost({ variables: { id: this.state.photoPost.id } })
@@ -107,6 +117,15 @@ class PhotoPost extends React.Component {
             });
     }
 
+    deletePhoto = () => {
+        this.props.deletePhotoPost({variables: {id: this.state.photoPost.id }})
+            .then(({ data }) => {
+                console.log('delete success!', data);
+            }).catch((error) => {
+                console.error('there was an error sending the deletePhotoPost', error);
+            });
+    }
+
     render() {
         //If it's new (no queryId), it'll never be loading, just show dropzone
         //otherwise the photoQuery will tell the rest of the cmps if it's done loading
@@ -124,25 +143,38 @@ class PhotoPost extends React.Component {
                 <Photo loading={loading}
                     isNew={!this.state.photoPost.id}
                     image={this.state.photoPost.image}
+                    base64={this.state.base64}
                     meta={this.state.photoPost.meta}
                     hypePhoto={this.hypePhoto}
                     updatePhotoPostImage={this.updatePhotoPostImage} />
+
                 <StyledInput id="postName"
                     className="form-control"
                     value={this.state.photoPost.postName}
                     placeholder="a short summary of the edit you want..."
                     onChange={event => this.updatePhotoPost(event)} />
+
                 <StyledTextarea id="whatToDo"
                     className="form-control"
                     placeholder="a paragraph on what you expect the edit to accomplish..."
                     value={this.state.photoPost.whatToDo}
                     onChange={event => this.updatePhotoPost(event)}>
                 </StyledTextarea>
+
                 <RatingQuestion loading={loading} 
                     type={PHOTO_RATING.USER.name} 
                     value={this.state.photoPost.meta.userRating}
                     updatePhotoPost={this.updatePhotoPost} />
+
                 <div className='d-flex justify-content-end'>
+                    {/* Figure out why this doesn't flip correctly on creation and deletion */}
+                    <StyledSaveButton color="danger"
+                        disabled={this.state.photoPost.id === null}
+                        className="m-1"
+                        onClick={() => { this.deletePhoto(); }}>
+                        <FA name="trash" /> Delete
+                    </StyledSaveButton>
+
                     <StyledSaveButton color="success"
                         disabled={disableSave}
                         className="m-1"
@@ -153,15 +185,18 @@ class PhotoPost extends React.Component {
                 
                 {/* Debug */}
                 <div>{this.state.photoPost ? JSON.stringify(this.state.photoPost) : ''}</div>
+                
             </form>
         );
     }
 }
 
+//Apparently these suck in prod
 PhotoPost.propTypes = {
     queryId: PropTypes.string
 }
 
 //In the future this will be abstracted to Detail HOC
-//SchemaContainer will compose apollo-client and auto resolve props and mutations onto the component
+//SchemaContainer will compose apollo-client and auto resolve GET data as props 
+//and mutations as promises to call onto props as well
 export default SchemaContainer(PhotoPost)
