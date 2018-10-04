@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 
 import { ApolloClient, InMemoryCache, ApolloLink } from 'apollo-client-preset';
-import { createUploadLink } from 'apollo-upload-client/lib/index';
+import { createUploadLink } from 'apollo-upload-client/lib/main/index';
 import { ApolloProvider } from 'react-apollo';
 
 import 'vendor';
