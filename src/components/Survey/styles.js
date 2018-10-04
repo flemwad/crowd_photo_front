@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const BaseCircleDiv = styled.div`
+const BaseDiv = styled.div`
     border-radius: 50%;
 
     width: 85px;
@@ -8,27 +8,12 @@ const BaseCircleDiv = styled.div`
 
     background: #42b9f4;
 
-    animation-name: grow, shrink;
-    animation-duration: 1000ms, 1000ms;
-    animation-delay: 0ms, 1000ms;
-    animation-iteration-count: 1, 1;
+    transition-property: transform;
+    transition-duration: 1s;
+    transition-timing-function: ease-in-out;
 
-    @keyframes grow {
-        from {
-            transform:scale(1);
-        }
-        to {
-            transform:scale(1.2);
-        }
-    }
-
-    @keyframes shrink {
-        from {
-            transform:scale(1.2);
-        }
-        to {
-            transform:scale(1);
-        }
+    :hover {        
+        transform:scale(1.2);
     }
 `;
 
@@ -46,16 +31,17 @@ export const StyledSVG = styled.svg`
     width: 100%;
 `;
 
-export const StyledFirstDiv = styled(BaseCircleDiv)`
+export const StyledFirstDiv = styled(BaseDiv)`
+    
 `;
 
-export const StyledMiddleDiv = styled(BaseCircleDiv)`
+export const StyledMiddleDiv = styled(BaseDiv)`
 `;
 
-export const StyledLastDiv = styled(BaseCircleDiv)`
+export const StyledLastDiv = styled(BaseDiv)`
 `;
 
-export const StyledSelectedDiv = styled(BaseCircleDiv)`
+export const StyledSelectedDiv = styled(BaseDiv)`
     border: 2px solid blue;
 `;
 

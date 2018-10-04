@@ -4,7 +4,6 @@ import update from 'immutability-helper';
 import { set } from 'lodash';
 
 import {
-    StyledOuterDiv,
     StyledFlexDiv,
     StyledFirstDiv,
     StyledMiddleDiv,
@@ -77,8 +76,11 @@ class Survey extends React.Component {
             relNextRect.left = nextRect.left - svgRect.left;
 
             let currLine = lineRefs[i];
+            //Note we extend the x-axis a bit in both directions to get line behind answer divs
             currLine.setAttribute('x1', (relCurrRect.left + currRect.width) - 5);
             currLine.setAttribute('y1', relCurrRect.top + (currRect.height / 2));
+
+            //Note we extend the x-axis a bit in both directions to get line behind answer divs
             currLine.setAttribute('x2', relNextRect.left + 5);
             currLine.setAttribute('y2', relNextRect.top + (nextRect.height / 2));
         }
@@ -109,11 +111,9 @@ class Survey extends React.Component {
     }
 
     AnswerLines() {
-        const answersLength = this.props.answers.length;
-
         return this.props.answers.map((answer, i) => {
             const currInnerRef = this[`line${i + 1}El`];
-            if (i <= answersLength - 1) {
+            if (i <= this.props.answers.length - 1) {
                 return (<StyledLineConnector key={i} innerRef={currInnerRef}></StyledLineConnector>);
             }
         });
