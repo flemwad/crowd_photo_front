@@ -1,48 +1,43 @@
 import styled from 'styled-components';
 
-const BaseDiv = styled.div`
-    border-radius: 50%;
+export const StyledSVG = styled.svg`
+    position: absolute;
 
-    width: 85px;
-    height: 85px;
+    left:0; 
+    top:0;
+    height:100%;
+    width: 100%;
+`;
 
-    background: #42b9f4;
+const BaseCircle = styled.circle`
+    r: 40;
+
+    fill: #42b9f4;
+    stoke: #42b9f4;
 
     transition-property: transform;
     transition-duration: 1s;
+    transform-box: fill-box;
+    transform-origin: center center;
     transition-timing-function: ease-in-out;
 
-    :hover {        
-        transform:scale(1.2);
+    :hover {
+        transform: scale(1.2);
     }
 `;
 
-export const StyledFlexDiv = styled.div`
-    display: flex;
-
-    justify-content: space-evenly;
-
-    height: 100%;
-    width: 100%;
-`;
-
-export const StyledSVG = styled.svg`
-    position: absolute;
-    width: 100%;
-`;
-
-export const StyledFirstDiv = styled(BaseDiv)`
+export const StyledFirstCircle = styled(BaseCircle)`
     
 `;
 
-export const StyledMiddleDiv = styled(BaseDiv)`
+export const StyledMiddleCircle = styled(BaseCircle)`
 `;
 
-export const StyledLastDiv = styled(BaseDiv)`
+export const StyledLastCircle = styled(BaseCircle)`
 `;
 
-export const StyledSelectedDiv = styled(BaseDiv)`
-    border: 2px solid blue;
+export const StyledSelectedCircle = styled(BaseCircle)`
+    stroke: blue;
 `;
 
 export const StyledLineConnector = styled.line`

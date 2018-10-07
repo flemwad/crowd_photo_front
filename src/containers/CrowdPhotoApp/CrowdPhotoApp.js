@@ -21,7 +21,7 @@ const SurveyDetailPageLayout = PageLayout(SurveyDetail);
 class CrowdPhotoApp extends React.Component {
     render() {
 
-        return <SurveyDetail />
+        return <SurveyDetailPageLayout />
         // return <PhotoPostPageLayout queryId={null} />
         // return <PhotoListPageLayout />
         // return <UserDetailPageLayout  queryId={null} registering={false} />

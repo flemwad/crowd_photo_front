@@ -4,11 +4,11 @@ import update from 'immutability-helper';
 import { set } from 'lodash';
 
 import {
-    StyledFlexDiv,
-    StyledFirstDiv,
-    StyledMiddleDiv,
-    StyledLastDiv,
-    StyledSelectedDiv,
+    StyledContainerDiv,
+    StyledFirstCircle,
+    StyledMiddleCircle,
+    StyledLastCircle,
+    StyledSelectedCircle,
     StyledLineConnector,
     StyledSVG
 } from './styles';
@@ -45,44 +45,54 @@ class Survey extends React.Component {
     }
 
     connectTheDots() {
-        let dotRefs = [];
+        let circleRefs = [];
         let lineRefs = [];
         for (let i = 0; i < this.props.answers.length; i++) {
             const pos = i + 1;
-            dotRefs.push(this[`answer${pos}El`].current.getBoundingClientRect());
+            circleRefs.push(this[`answer${pos}El`].current);
             if (i < this.props.answers.length - 1) lineRefs.push(this[`line${pos}El`].current);
         }
         
-        const svgRect = this.svgRef.current.getBoundingClientRect();
-        for (let i = 0; i < dotRefs.length - 1; i++) {
-            const currRect = dotRefs[i];
-            const nextRect = dotRefs[i + 1];
+        const svgClientRect = this.svgRef.current.getBoundingClientRect();
+        const svgEvenWidth = (svgClientRect.width / circleRefs.length);
+        const svgOffestWidth = (svgClientRect.width / circleRefs.length) / 2;
+        for (let i = 0; i < circleRefs.length; i++) {
+            const currCircleEl = circleRefs[i];
+            
+            currCircleEl.setAttribute('cx', (i * svgEvenWidth) + svgOffestWidth);
+            currCircleEl.setAttribute('cy', svgClientRect.top + (svgClientRect.height / 2));
+        }
+        
+        for (let i = 0; i < circleRefs.length - 1; i++) {
+            const currCircleRect = circleRefs[i].getBoundingClientRect();
+            const nextCircleRect = circleRefs[i + 1].getBoundingClientRect();
 
             //TODO: Fix resizing and this not being accurate
             //This might help https://stackoverflow.com/questions/19014250/rerender-view-on-browser-resize-with-react
 
-            //Get the relative position of the answer dots
-            //needed because the SVG doesn't fill the width of the window
+            //Get the relative position of the svg element so we can accurately place circles
+            //needed mostly because the SVG doesn't fill the width of the window
             let relCurrRect = {};
-            relCurrRect.top = currRect.top - svgRect.top,
-            relCurrRect.right = currRect.right - svgRect.right,
-            relCurrRect.bottom = currRect.bottom - svgRect.bottom,
-            relCurrRect.left = currRect.left - svgRect.left;
+            relCurrRect.top = currCircleRect.top - svgClientRect.top,
+            relCurrRect.right = currCircleRect.right - svgClientRect.right,
+            relCurrRect.bottom = currCircleRect.bottom - svgClientRect.bottom,
+            relCurrRect.left = currCircleRect.left - svgClientRect.left;
+            
 
             let relNextRect = {};
-            relNextRect.top = nextRect.top - svgRect.top,
-            relNextRect.right = nextRect.right - svgRect.right,
-            relNextRect.bottom = nextRect.bottom - svgRect.bottom,
-            relNextRect.left = nextRect.left - svgRect.left;
+            relNextRect.top = nextCircleRect.top - svgClientRect.top,
+            relNextRect.right = nextCircleRect.right - svgClientRect.right,
+            relNextRect.bottom = nextCircleRect.bottom - svgClientRect.bottom,
+            relNextRect.left = nextCircleRect.left - svgClientRect.left;
 
             let currLine = lineRefs[i];
             //Note we extend the x-axis a bit in both directions to get line behind answer divs
-            currLine.setAttribute('x1', (relCurrRect.left + currRect.width) - 5);
-            currLine.setAttribute('y1', relCurrRect.top + (currRect.height / 2));
+            currLine.setAttribute('x1', (relCurrRect.left + currCircleRect.width) - 5);
+            currLine.setAttribute('y1', relCurrRect.top + (currCircleRect.height / 2));
 
             //Note we extend the x-axis a bit in both directions to get line behind answer divs
             currLine.setAttribute('x2', relNextRect.left + 5);
-            currLine.setAttribute('y2', relNextRect.top + (nextRect.height / 2));
+            currLine.setAttribute('y2', relNextRect.top + (nextCircleRect.height / 2));
         }
     }
 
@@ -93,18 +103,18 @@ class Survey extends React.Component {
             const currInnerRef = this[`answer${i + 1}El`];
             if (i === 0) {
                 return (
-                    <StyledFirstDiv key={i} innerRef={currInnerRef}>
-                    </StyledFirstDiv>
+                    <StyledFirstCircle key={i} innerRef={currInnerRef}>
+                    </StyledFirstCircle>
                 );
             } else if (i < answersLength - 1) {
                 return (
-                    <StyledMiddleDiv key={i} innerRef={currInnerRef}>
-                    </StyledMiddleDiv>
+                    <StyledMiddleCircle key={i} innerRef={currInnerRef}>
+                    </StyledMiddleCircle>
                 );
             } else {
                 return (
-                    <StyledLastDiv key={i} innerRef={currInnerRef}>
-                    </StyledLastDiv>
+                    <StyledLastCircle key={i} innerRef={currInnerRef}>
+                    </StyledLastCircle>
                 );
             }
         });
@@ -124,14 +134,10 @@ class Survey extends React.Component {
         const AnswerLines = this.AnswerLines;
 
         return (
-            <div className="container">
-                <StyledSVG innerRef={this.svgRef}>
-                    <AnswerLines />
-                </StyledSVG>
-                <StyledFlexDiv>
-                    <AnswerDots />
-                </StyledFlexDiv>
-            </div>
+            <StyledSVG innerRef={this.svgRef}>
+                <AnswerDots />
+                <AnswerLines />
+            </StyledSVG>
             // <div>
             //     {this.state.answers ? JSON.stringify(this.state.answers) : []}
             // </div>
