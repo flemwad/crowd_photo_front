@@ -1,5 +1,7 @@
 import React from 'react';
 import Survey from 'src/components/Survey/Survey';
+import update from 'immutability-helper';
+import { set, findIndex } from 'lodash';
 
 import { SurveyContainer } from './styles';
 
@@ -21,8 +23,26 @@ class SurveyDetail extends React.Component {
     }
 
     //TODO: Validation!
-    changeAnswer() {
+    changeAnswer(i) {
+        const unselectIndex = findIndex(this.state.answers, {selected: true});
 
+        let answers = this.state.answers;
+        let selected = true;
+        
+        //If the answer changed we have to unselect the old one
+        if (unselectIndex > -1 && i !== unselectIndex) {
+            let updateUnselectDef = {};
+            set(updateUnselectDef, unselectIndex, {selected: {$set: false}});
+            answers = update(this.state.answers, updateUnselectDef)
+        } else if (unselectIndex > -1 && i === unselectIndex) {
+            //If it was already answered unselect it
+            selected = false;
+        }
+
+        let updateSelectDef = {};
+        set(updateSelectDef, i, {selected: {$set: selected}});
+        answers = update(answers, updateSelectDef)
+        this.setState({answers});
     }
 
     render() {

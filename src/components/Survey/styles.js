@@ -10,13 +10,13 @@ export const StyledSVG = styled.svg`
 `;
 
 const BaseCircle = styled.circle`
-    r: 40;
+    r: 35;
 
     fill: #42b9f4;
-    stoke: #42b9f4;
+    stroke: #42b9f4;
 
     transition-property: transform;
-    transition-duration: 1s;
+    transition-duration: 500ms;
     transform-box: fill-box;
     transform-origin: center center;
     transition-timing-function: ease-in-out;
@@ -37,7 +37,9 @@ export const StyledLastCircle = styled(BaseCircle)`
 `;
 
 export const StyledSelectedCircle = styled(BaseCircle)`
-    stroke: blue;
+    fill: #f49542;
+    stroke: #42b9f4;
+    stroke-width: 12; 
 `;
 
 export const StyledLineConnector = styled.line`
